@@ -84,13 +84,13 @@ class Board:
         return False
     
     def isValidMove(self, x, y) -> bool:
+        if not self.size > x >= 0:
+            print('--Invalid Move--')
+            return False
+        if not self.size > y >= 0:
+            print('--Invalid Move--')
+            return False
         if self.wall[x][y].isTaken:
-            print('--Invalid Move--')
-            return False
-        elif not self.size > x >= 0:
-            print('--Invalid Move--')
-            return False
-        elif not self.size > y >= 0:
             print('--Invalid Move--')
             return False
         return True
