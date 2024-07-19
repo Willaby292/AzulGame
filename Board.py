@@ -1,4 +1,6 @@
 from Cell import *
+from Line import *
+
 
 class Board:
     def __init__(self, size):
@@ -7,12 +9,16 @@ class Board:
         self.completeV = 0
         self.completeC = 0
         self.wall = [[0 for i in range(size)] for j in range(size)]
+        self.lines = []
         index = size - 1
         for x in range(0, self.size):
             for y in range(0, self.size):
                 index = (index + 1) % size
-                self.wall[x][y] = Cell(str(index))
+                self.wall[x][y] = Cell(str(index + 1))
             index = (index - 1) % size
+        
+        for y in range(0, self.size):
+            self.lines.append(Line(y, y + 1))
 
     def getWall(self):
         return self.wall
@@ -21,6 +27,11 @@ class Board:
         print('-----------')
         for y in range(0, len(self.wall)):
             print('|', end='')
+            for i in range(0, self.size - self.lines[y].length):
+                print(' ' + ' ' + ' ', end='|')
+            for i in range(0, self.lines[y].length):
+                print(' ' + str(self.lines[y].color) + ' ', end='|')
+            print('#|', end='')
             for x in range(0, len(self.wall)):
                 if self.wall[x][y].isTaken:
                     print('-' + self.wall[x][y].color + '-', end='|')

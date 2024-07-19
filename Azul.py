@@ -12,7 +12,6 @@ def playRound(players, activePlayerIndex) -> Player:
             break
     return activePlayer
 
-
 def playerTurn(activePlayer):
     print(activePlayer.name, ': ')
     activePlayer.board.printBoard()
