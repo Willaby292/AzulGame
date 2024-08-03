@@ -77,7 +77,7 @@ class Board:
         if hScore == self.size - 1:
             self.completeH += 1
 
-        if self.checkCompleteColor(self.wall[x][y].color):
+        if self.checkCompleteColor(self.wall[x][y].color): #cache color instead
             self.completeC += 1
 
         score = vScore + hScore + score
