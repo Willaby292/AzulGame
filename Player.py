@@ -1,10 +1,10 @@
 from Board import *
 
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, boardSize=5):
         self.name = name
         self.score = 0
-        self.board = Board(5)
+        self.board = Board(boardSize)
 
     def addScore(self, score):
         self.score += score

@@ -1,4 +1,5 @@
 from Cell import *
+from Factory import *
 from Line import *
 
 

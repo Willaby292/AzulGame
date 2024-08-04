@@ -1,27 +1,27 @@
 from Player import *
 
-def playRound(players, activePlayerIndex) -> Player:
+def playRound(players, activePlayerIndex, factory) -> Player:
     activePlayer = players[activePlayerIndex]
     starter = activePlayer.name
     while True:
         activePlayerIndex = (activePlayerIndex + 1) % len(players)
         activePlayer = players[activePlayerIndex]
-        playerTurn(activePlayer)
+        playerTurn(activePlayer, factory)
         print(activePlayer.score)
         if starter == activePlayer.name:
             break
     return activePlayer
 
-def playerTurn(activePlayer):
+def playerTurn(activePlayer, factory):
     print(activePlayer.name, ': ')
     activePlayer.board.printBoard()
-    coordinates = input("Select a coordinate: ").split(",")
-    x = int(coordinates[0])
-    y = int(coordinates[1])
-    while not activePlayer.board.isValidMove(x,abs(y - (activePlayer.board.size - 1))):
-        coordinates = input("Select a coordinate: ").split(",")
-        x = int(coordinates[0])
-        y = int(coordinates[1])
+    pool = int(input("Select a pool: "))
+    print(factory.getPools()[pool].getTiles()) #print list of options
+    color = int(input("Select a color: "))
+    while not color in factory.getPools()[pool].getTiles():
+        pool = int(input("Select a pool: "))
+        print(factory.getPools()[pool].getTiles()) #print list of options
+        color = int(input("Select a color: "))
     activePlayer.board.wall[x][abs(y - (activePlayer.board.size - 1))].take()
     activePlayer.addScore(activePlayer.board.score(x,y))
 
@@ -40,11 +40,13 @@ def bonusPoints(players):
 def main():
     names = input("Enter player names separated by comma:").split(",")
     players = list(map(Player, names))
+    factory = Factory()
+    factory.fillAllPools()
 
     activePlayerIndex = -1
 
     while not checkGameOver(players):
-        playRound(players, activePlayerIndex)
+        playRound(players, activePlayerIndex, factory)
     
     bonusPoints(players)
 
