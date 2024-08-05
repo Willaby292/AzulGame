@@ -1,24 +1,22 @@
-import math
 import random
 
 class TileBag:
-    def __init__(self, numColors: int=5, tilesPerColor: int=15) -> None:
+    def __init__(self, numColors: int=5, tilesPerColor: int=15) -> None: #there is an edge case where youy can make a game with not enough tiles to fill the factory
         self.allTiles = {}
         self.numColors = numColors
         self.tilesPerColor = tilesPerColor
-        for i in range(1, numColors+1):
+        for i in range(1, numColors + 1):
             self.allTiles[i] = tilesPerColor
 
-
     def removeRandomTile(self) -> int:
-        colorsWithTiles = []
-        for i in self.allTiles:
-            if self.allTiles[i] > 0:
-                colorsWithTiles.append(i)
-        chosenColor = random.randint(0, len(colorsWithTiles)-1)
-        self.allTiles[colorsWithTiles[chosenColor]] -= 1
-        return colorsWithTiles[chosenColor]
+        availableColors = list(filter(lambda color: self.allTiles[color] >= 1, self.allTiles))
+        if not availableColors:
+            self.refillBag()
+            availableColors = list(filter(lambda color: self.allTiles[color] >= 1, self.allTiles))  #doing it this way means the math is off. Since some tiles will already be on the board
+        chosenColor = random.choice(availableColors)
+        self.allTiles[chosenColor] -= 1
+        return chosenColor
 
     def refillBag(self):
-        for i in range(0, self.numColors):
+        for i in range(1, self.numColors + 1):
             self.allTiles[i] = self.tilesPerColor

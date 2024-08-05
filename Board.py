@@ -15,11 +15,10 @@ class Board:
         for x in range(0, self.size):
             for y in range(0, self.size):
                 index = (index + 1) % size
-                self.wall[x][y] = Cell(str(index + 1))
+                self.wall[x][y] = Cell(index + 1)
             index = (index - 1) % size
-
         for y in range(0, self.size): #add one to make more readable
-            self.lines.append(Line(y + 1, y + 1))
+            self.lines.append(Line(y + 1))
 
     def getWall(self):
         return self.wall
@@ -27,7 +26,7 @@ class Board:
     def printBoard(self):
         print('-----------')
         for y in range(0, len(self.wall)):
-            print(str(self.lines[y].row)+'|', end='')
+            print(str(self.lines[y].length)+'|', end='')
             for i in range(0, self.size - self.lines[y].length):
                 print(' ' + ' ' + ' ', end='|')
             for i in range(0, self.lines[y].length):
@@ -35,9 +34,9 @@ class Board:
             print('#|', end='')
             for x in range(0, len(self.wall)):
                 if self.wall[x][y].isTaken:
-                    print('-' + self.wall[x][y].color + '-', end='|')
+                    print('-' + str(self.wall[x][y].color) + '-', end='|')
                 else:
-                    print(' ' + self.wall[x][y].color + ' ', end='|')
+                    print(' ' + str(self.wall[x][y].color) + ' ', end='|')
             print('')
 
 
@@ -94,7 +93,7 @@ class Board:
                     return True
         return False
 
-    def isValidMove(self, x, y) -> bool:
+    def isValidMove(self, x, y) -> bool: #should be made into exception
         if not self.size > x >= 0:
             print('--Invalid Move--')
             return False
@@ -105,3 +104,17 @@ class Board:
             print('--Invalid Move--')
             return False
         return True
+
+    def getLines(self):
+        return self.lines
+
+    def placeTile(self, color, row, column = None):
+        if column is None:
+            for column in range(0,len(self.wall)): #check if it is taken
+                if self.wall[column][row].color == color and not self.wall[column][row].isTaken: #shouldnt have to check if it is taken. should be done earlier
+                    self.wall[column][row].take()
+                    return self.score(column, row)
+        else:
+            if not self.wall[column][row].isTaken: #shouldnt have to check if it is taken. should be done earlier
+                self.wall[column][row].take()
+                return self.score(column, row)

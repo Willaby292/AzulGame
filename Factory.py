@@ -1,22 +1,28 @@
 from Pool import *
 
-#Structure of factory should be map of pools -> array of tiles
-# ie map   1 : (blue, blue, black, white), 2 : (white, white, yellow, red) 3: ()
-# they will either have 4 tiles, or zero tiles except for the center pool which will hold 0-unlimited tiles and will initialize with a -1 tile
-# the -1 tile will be represented by a boolean hasMinusTile which is set to True until a player picks from the center pool
+def checkEnoughTilesToFillPools(numPools, numColors, tilesPerColor): #needs to be implemented
+    totalTiles = numColors * tilesPerColor
+    if totalTiles/numPools < 4:
+        raise Exception("Cannot start game. Not enough tiles["+ str(totalTiles) +"] to fill pools["+str(numPools)+"]")
 
 class Factory:
-    def __init__(self, numPools: int=5):
+    def __init__(self, numPools: int=5, numColors: int=5, tilesPerColor:int = 15):
         self.numPools = numPools
         self.pools = {}
-        self.tileBag = TileBag()
-        for i in range(0, numPools + 1): #add one to account for center pool
+        try:
+            checkEnoughTilesToFillPools(numPools, numColors, tilesPerColor)
+            self.tileBag = TileBag(numColors, tilesPerColor) #need to check that the facroty has enough tiles to fill the pools
+        except Exception as e:
+            print(e)
+            print('Defaulting tile count')
+            self.numPools = 5
+            self.tileBag = TileBag()
+        for i in range(0, self.numPools + 1): #add one to account for center pool
             self.pools[i] = Pool()
 
     def fillAllPools(self) -> None:
-        for pool in self.pools:
+        for pool in range(1, len(self.pools)):
             self.pools[pool].fillPool(self.tileBag)
-        self.pools[0].clearPool()
 
     def getPools(self):
         return self.pools
@@ -34,3 +40,9 @@ class Factory:
             self.pools[0].tiles.append(i)
 
         self.pools[pool].clearPool()
+
+    def isEmpty(self):
+        for poolNum in self.pools:
+            if not self.pools[poolNum].isEmpty():
+                return False
+        return True

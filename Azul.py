@@ -1,26 +1,33 @@
 from Player import *
 
+#TODO fix players being able to add to rows that are taken by different colors
+#TODO add negitive points for picking center first
+#TODO add negitive row for overflow tiles
+#TODO fix turn order so each round starts with player who took the center first in last round
+
+def printBoard(activePlayer, factory):
+    print(activePlayer.name, ':', activePlayer.score)
+
+    activePlayer.board.printBoard()
+    factory.printFactory()
+
 def playRound(players, activePlayerIndex, factory) -> Player:
     activePlayer = players[activePlayerIndex]
-    starter = activePlayer.name
     while True:
         activePlayerIndex = (activePlayerIndex + 1) % len(players)
         activePlayer = players[activePlayerIndex]
         playerTurn(activePlayer, factory)
-        print(activePlayer.score)
-        if starter == activePlayer.name:
+        if factory.isEmpty():
             break
     return activePlayer
 
 def playerTurn(activePlayer, factory):
-    print(activePlayer.name, ': ')
-    activePlayer.board.printBoard()
-    factory.printFactory()
+    printBoard(activePlayer, factory)
     pool = int(input("Select a pool: "))
     print(factory.getPools()[pool].getTiles()) #print list of options
     color = int(input("Select a color: "))
     row = int(input("Select a row: ")) - 1 #account for the fact that the program list is starts at 0 but player readability should have it start at 1
-    while not color in factory.getPools()[pool].getTiles():
+    while not color in factory.getPools()[pool].getTiles():# can use the check fill line in Line.py
         print("pool color combo doesnt exist")
         pool = int(input("Select a pool: "))
         print(factory.getPools()[pool].getTiles()) #print list of options
@@ -46,19 +53,24 @@ def checkGameOver(players) -> bool:
 def bonusPoints(players):
     for player in players:
         player.addScore(player.bonusPoints())
-        print(player.name + ': ' + str(player.score))
+        print(player.name + ': ' , player.score)
 
 
 def main():
     names = input("Enter player names separated by comma:").split(",")
     players = list(map(Player, names))
-    factory = Factory()
-    factory.fillAllPools()
-
+    factory = Factory(numPools=1, numColors=5, tilesPerColor=15)
     activePlayerIndex = -1
 
     while not checkGameOver(players):
-        playRound(players, activePlayerIndex, factory)
+        factory.fillAllPools() #make sure there are enough tiles in bag
+        playRound(players, activePlayerIndex, factory) #stops when factory is empty
+        for player in players:
+            for row in range(0, len(player.board.getLines())):
+                if player.board.getLines()[row].isFull():
+                    color = player.board.lines[row].getTileColor()
+                    player.board.lines[row].resetRow()
+                    player.score += player.board.placeTile(color, row)
 
     bonusPoints(players)
 

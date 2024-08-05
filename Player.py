@@ -13,6 +13,6 @@ class Player:
         hTotal = self.board.completeH * 2
         vTotal = self.board.completeV * 7
         cTotal = self.board.completeC * 10
-        
+
         totalBonus = hTotal + vTotal + cTotal
         return totalBonus
