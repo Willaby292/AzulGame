@@ -17,6 +17,20 @@ class Factory:
         for pool in self.pools:
             self.pools[pool].fillPool(self.tileBag)
         self.pools[0].clearPool()
-    
+
     def getPools(self):
         return self.pools
+
+    def printFactory(self):
+        for pool in self.pools:
+            print(str(pool)+':', end='')
+            print(self.pools[pool].getTiles(), end='  ')
+        print('')
+        print('-----------')
+
+    def movePoolToCenter(self, pool, color):
+        self.pools[pool].removeTile(color)
+        for i in self.pools[pool].getTiles():
+            self.pools[0].tiles.append(i)
+
+        self.pools[pool].clearPool()

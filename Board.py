@@ -17,29 +17,28 @@ class Board:
                 index = (index + 1) % size
                 self.wall[x][y] = Cell(str(index + 1))
             index = (index - 1) % size
-        
-        for y in range(0, self.size):
-            self.lines.append(Line(y, y + 1))
+
+        for y in range(0, self.size): #add one to make more readable
+            self.lines.append(Line(y + 1, y + 1))
 
     def getWall(self):
         return self.wall
-    
+
     def printBoard(self):
         print('-----------')
         for y in range(0, len(self.wall)):
-            print('|', end='')
+            print(str(self.lines[y].row)+'|', end='')
             for i in range(0, self.size - self.lines[y].length):
                 print(' ' + ' ' + ' ', end='|')
             for i in range(0, self.lines[y].length):
-                print(' ' + str(self.lines[y].color) + ' ', end='|')
+                print(' ' + str(self.lines[y].queue[i]) + ' ', end='|')###
             print('#|', end='')
             for x in range(0, len(self.wall)):
                 if self.wall[x][y].isTaken:
                     print('-' + self.wall[x][y].color + '-', end='|')
                 else:
                     print(' ' + self.wall[x][y].color + ' ', end='|')
-            print('')        
-        print('-----------')
+            print('')
 
 
     def recur(self, dx, dy, x, y) -> int:
@@ -83,7 +82,7 @@ class Board:
 
         score = vScore + hScore + score
         return score
-    
+
     def isGameOver(self) -> bool:
         for y in range(0, self.size):
             index = 0
@@ -94,7 +93,7 @@ class Board:
                 if index == self.size:
                     return True
         return False
-    
+
     def isValidMove(self, x, y) -> bool:
         if not self.size > x >= 0:
             print('--Invalid Move--')

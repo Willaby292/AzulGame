@@ -6,7 +6,7 @@ class TileBag:
         self.allTiles = {}
         self.numColors = numColors
         self.tilesPerColor = tilesPerColor
-        for i in range(0, numColors):
+        for i in range(1, numColors+1):
             self.allTiles[i] = tilesPerColor
 
 
@@ -17,8 +17,8 @@ class TileBag:
                 colorsWithTiles.append(i)
         chosenColor = random.randint(0, len(colorsWithTiles)-1)
         self.allTiles[colorsWithTiles[chosenColor]] -= 1
-        return chosenColor
-    
+        return colorsWithTiles[chosenColor]
+
     def refillBag(self):
         for i in range(0, self.numColors):
             self.allTiles[i] = self.tilesPerColor
