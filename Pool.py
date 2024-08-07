@@ -2,6 +2,7 @@ from TileBag import *
 
 class Pool:
     def __init__(self) -> None:
+        self.hasNegitiveTile = False
         self.tiles = []
 
     def fillPool(self, tileBag):
@@ -21,3 +22,6 @@ class Pool:
         if not self.tiles:
             return True
         return False
+
+    def sortPool(self) -> None:
+        self.tiles.sort()

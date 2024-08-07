@@ -1,9 +1,10 @@
 from Pool import *
+import Exceptions
 
 def checkEnoughTilesToFillPools(numPools, numColors, tilesPerColor): #needs to be implemented
     totalTiles = numColors * tilesPerColor
     if totalTiles/numPools < 4:
-        raise Exception("Cannot start game. Not enough tiles["+ str(totalTiles) +"] to fill pools["+str(numPools)+"]")
+        raise Exceptions.SetUpError("Cannot start game. Not enough tiles["+ str(totalTiles) +"] to fill pools["+str(numPools)+"]")
 
 class Factory:
     def __init__(self, numPools: int=5, numColors: int=5, tilesPerColor:int = 15):
@@ -12,9 +13,9 @@ class Factory:
         try:
             checkEnoughTilesToFillPools(numPools, numColors, tilesPerColor)
             self.tileBag = TileBag(numColors, tilesPerColor) #need to check that the facroty has enough tiles to fill the pools
-        except Exception as e:
+        except Exceptions.SetUpError as e:
             print(e)
-            print('Defaulting tile count')
+            print('Defaulting')
             self.numPools = 5
             self.tileBag = TileBag()
         for i in range(0, self.numPools + 1): #add one to account for center pool
@@ -23,13 +24,17 @@ class Factory:
     def fillAllPools(self) -> None:
         for pool in range(1, len(self.pools)):
             self.pools[pool].fillPool(self.tileBag)
+        self.pools[0].hasNegitiveTile = True
 
     def getPools(self):
         return self.pools
 
     def printFactory(self):
         for pool in self.pools:
+            self.pools[pool].sortPool()
             print(str(pool)+':', end='')
+            if self.pools[pool].hasNegitiveTile:
+                print('(-1)', end='')
             print(self.pools[pool].getTiles(), end='  ')
         print('')
         print('-----------')
@@ -45,4 +50,12 @@ class Factory:
         for poolNum in self.pools:
             if not self.pools[poolNum].isEmpty():
                 return False
+        return True
+
+    def isValidMoveFactory(self, pool, color) -> bool:
+        # row must have space for all tiles being added XXX wrong this actually just gets overflowed to negitive line
+        if self.numPools < pool:
+            return False
+        if not color in self.pools[pool].tiles:
+            return False
         return True

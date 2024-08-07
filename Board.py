@@ -1,7 +1,7 @@
 from Cell import *
 from Factory import *
 from Line import *
-
+from FloorLine import *
 
 class Board:
     def __init__(self, size):
@@ -11,13 +11,14 @@ class Board:
         self.completeC = 0
         self.wall = [[0 for i in range(size)] for j in range(size)]
         self.lines = []
+        self.floorLine = FloorLine()
         index = size - 1
         for x in range(0, self.size):
             for y in range(0, self.size):
                 index = (index + 1) % size
                 self.wall[x][y] = Cell(index + 1)
             index = (index - 1) % size
-        for y in range(0, self.size): #add one to make more readable
+        for y in range(0, self.size):
             self.lines.append(Line(y + 1))
 
     def getWall(self):
@@ -38,6 +39,13 @@ class Board:
                 else:
                     print(' ' + str(self.wall[x][y].color) + ' ', end='|')
             print('')
+        print('Floor Line[', end='')
+        for i in range(0, 7):
+            if self.floorLine.arr[i].isTaken:
+                print('',self.floorLine.arr[i].color,'', end='')
+            else:
+                print('',0,'',end='')
+        print(']')
 
 
     def recur(self, dx, dy, x, y) -> int:
@@ -57,7 +65,6 @@ class Board:
                     if not self.wall[x][y].isTaken:
                         return False
         return True
-
 
     def score(self, x, y) -> int:
         score = 1
@@ -93,28 +100,20 @@ class Board:
                     return True
         return False
 
-    def isValidMove(self, x, y) -> bool: #should be made into exception
-        if not self.size > x >= 0:
-            print('--Invalid Move--')
+    def isValidMoveBoard(self, color, row):
+        lastInRow = self.lines[row].queue[len(self.lines[row].queue)-1]
+        if not lastInRow == color and not lastInRow == 0: # failed
             return False
-        if not self.size > y >= 0:
-            print('--Invalid Move--')
-            return False
-        if self.wall[x][y].isTaken:
-            print('--Invalid Move--')
-            return False
+        for column in range(0, self.size): #failed
+            if self.wall[column][row].color == color and self.wall[column][row].isTaken:
+                return False
         return True
 
     def getLines(self):
         return self.lines
 
-    def placeTile(self, color, row, column = None):
-        if column is None:
-            for column in range(0,len(self.wall)): #check if it is taken
-                if self.wall[column][row].color == color and not self.wall[column][row].isTaken: #shouldnt have to check if it is taken. should be done earlier
-                    self.wall[column][row].take()
-                    return self.score(column, row)
-        else:
-            if not self.wall[column][row].isTaken: #shouldnt have to check if it is taken. should be done earlier
+    def placeTile(self, color, row):
+        for column in range(0,len(self.wall)):
+            if self.wall[column][row].color == color and not self.wall[column][row].isTaken: #shouldnt have to check if it is taken. should be done earlier
                 self.wall[column][row].take()
                 return self.score(column, row)

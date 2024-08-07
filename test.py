@@ -1,4 +1,6 @@
-wall = [[0 for i in range(5)] for j in range(5)]
-
-print(len(wall))
-
+l = [1,2,3,4]
+x = 5
+if not x in l:
+    print('not in')
+else:
+    print('in')
