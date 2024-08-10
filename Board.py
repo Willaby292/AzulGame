@@ -101,7 +101,10 @@ class Board:
         return False
 
     def isValidMoveBoard(self, color, row):
-        lastInRow = self.lines[row].queue[len(self.lines[row].queue)-1]
+        if row == -1: #this might cause problems
+            return True
+        else:
+            lastInRow = self.lines[row].queue[len(self.lines[row].queue)-1]
         if not lastInRow == color and not lastInRow == 0: # failed
             return False
         for column in range(0, self.size): #failed

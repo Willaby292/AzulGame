@@ -24,7 +24,7 @@ class Factory:
     def fillAllPools(self) -> None:
         for pool in range(1, len(self.pools)):
             self.pools[pool].fillPool(self.tileBag)
-        self.pools[0].hasNegitiveTile = True
+        self.pools[0].hasNegativeTile = True
 
     def getPools(self):
         return self.pools
@@ -33,7 +33,7 @@ class Factory:
         for pool in self.pools:
             self.pools[pool].sortPool()
             print(str(pool)+':', end='')
-            if self.pools[pool].hasNegitiveTile:
+            if self.pools[pool].hasNegativeTile:
                 print('(-1)', end='')
             print(self.pools[pool].getTiles(), end='  ')
         print('')
@@ -54,7 +54,7 @@ class Factory:
 
     def isValidMoveFactory(self, pool, color) -> bool:
         # row must have space for all tiles being added XXX wrong this actually just gets overflowed to negitive line
-        if self.numPools < pool:
+        if self.numPools < pool or pool < 0:
             return False
         if not color in self.pools[pool].tiles:
             return False

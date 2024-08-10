@@ -1,13 +1,14 @@
 from Cell import *
 
 class FloorLine:
-    def __init__(self, length: int=7):
-        cellValues = [-1, -1, -2, -2, -2, -3, -3]
-        self.length = length
+    cellValues = [-1, -1, -2, -2, -2, -3, -3]
+
+    def __init__(self):
+        self.length = 7
         self.arr = []
         self.index = 0
-        for i in range(0, length):
-            self.arr.append(Cell(cellValues[i]))
+        for i in range(0, self.length):
+            self.arr.append(Cell(FloorLine.cellValues[i]))
 
     def isFull(self) -> bool:
         if self.arr[self.length-1].isTaken:
@@ -17,7 +18,7 @@ class FloorLine:
     def resetRow(self) -> int:
         self.arr.clear()
         for i in range(0, self.length):
-            self.queue.append(0)
+            self.arr.append(Cell(FloorLine.cellValues[i]))
 
     def addTiles(self, numTiles):
         for i in range(0, numTiles):

@@ -30,15 +30,22 @@ def playerTurn(activePlayer, factory):
         color = int(input("Select a color: "))
         row = int(input("Select a row: ")) - 1
 
-    if pool == 0 and factory.pools[0].hasNegitiveTile:
+    if pool == 0 and factory.pools[0].hasNegativeTile:
         activePlayer.board.floorLine.addTiles(1)
-    chosenTiles = list(filter(lambda tile: tile!=color, factory.getPools()[pool].getTiles()))
-    #check if tiles can fit and put others into
-    activePlayer.board.lines[row].fillLine(color, len(chosenTiles))
+        factory.pools[0].hasNegativeTile = False
+    chosenTiles = list(filter(lambda tile: tile==color, factory.getPools()[pool].getTiles()))
     if not pool == 0:
         factory.movePoolToCenter(pool, color)
     else:
         factory.pools[0].tiles = list(filter(lambda tile: tile!=color, factory.pools[0].tiles))
+    if row == -1:
+        activePlayer.board.floorLine.addTiles(len(chosenTiles))
+    else:
+        overflow = len(chosenTiles) - activePlayer.board.lines[row].numOpenSpaces()
+        activePlayer.board.lines[row].fillLine(color, len(chosenTiles))    
+        if 0 < overflow:
+            activePlayer.board.floorLine.addTiles(overflow)
+            
 
 def checkGameOver(players) -> bool:
     for player in players:
@@ -67,7 +74,11 @@ def main():
                     color = player.board.lines[row].getTileColor()
                     player.board.lines[row].resetRow()
                     player.score += player.board.placeTile(color, row)
-
+            #empty fill line subtract it from score
+            for cell in player.board.floorLine.arr:
+                if cell.isTaken:
+                    player.score += cell.color
+            player.board.floorLine.resetRow()
     bonusPoints(players)
 
 if __name__ == '__main__':

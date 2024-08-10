@@ -2,7 +2,7 @@ from TileBag import *
 
 class Pool:
     def __init__(self) -> None:
-        self.hasNegitiveTile = False
+        self.hasNegativeTile = False
         self.tiles = []
 
     def fillPool(self, tileBag):

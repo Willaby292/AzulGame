@@ -5,6 +5,7 @@ class Player:
         self.name = name
         self.score = 0
         self.board = Board(boardSize)
+        self.toStart = False
 
     def addScore(self, score):
         self.score += score

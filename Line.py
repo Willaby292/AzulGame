@@ -27,3 +27,10 @@ class Line:
 
     def getTileColor(self) -> int:
         return self.queue[len(self.queue)-1]
+
+    def numOpenSpaces(self) -> int:
+        openSpaces = 0
+        for i in self.queue:
+            if i == 0:
+                openSpaces += 1
+        return openSpaces
