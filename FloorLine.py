@@ -16,6 +16,7 @@ class FloorLine:
         return False
 
     def resetRow(self) -> int:
+        self.index = 0
         self.arr.clear()
         for i in range(0, self.length):
             self.arr.append(Cell(FloorLine.cellValues[i]))

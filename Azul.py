@@ -1,38 +1,53 @@
 from Player import *
 
-#TODO add negitive row for overflow tiles
-#TODO fix turn order so each round starts with player who took the center first in last round
-
 def printBoard(activePlayer, factory):
     print(activePlayer.name, ':', activePlayer.score)
-
     activePlayer.board.printBoard()
     factory.printFactory()
+
+def getStartingPlayer(players) -> int:
+    for activePlayerIndex, player in enumerate(players, 0):
+        if player.toStart:
+            player.toStart = False
+            return activePlayerIndex
+    return 0
+
 
 def playRound(players, activePlayerIndex, factory) -> Player:
     activePlayer = players[activePlayerIndex]
     while True:
-        activePlayerIndex = (activePlayerIndex + 1) % len(players)
         activePlayer = players[activePlayerIndex]
         playerTurn(activePlayer, factory)
+        activePlayerIndex = (activePlayerIndex + 1) % len(players)
         if factory.isEmpty():
             break
     return activePlayer
 
 def playerTurn(activePlayer, factory):
     printBoard(activePlayer, factory)
-    pool = int(input("Select a pool: "))
-    color = int(input("Select a color: "))
-    row = int(input("Select a row: ")) - 1 #account for the fact that the program list is starts at 0 but player readability should have it start at 1
-    while not activePlayer.board.isValidMoveBoard(color, row) or not factory.isValidMoveFactory(pool, color):
-        print("Move invalid. Try again")
+    try:
         pool = int(input("Select a pool: "))
         color = int(input("Select a color: "))
-        row = int(input("Select a row: ")) - 1
+        row = int(input("Select a row: ")) - 1 #account for the fact that the program list is starts at 0 but player readability should have it start at 1
+    except ValueError as e:
+        pool = -1
+        color = 0
+        row = -2
+    while not activePlayer.board.isValidMoveBoard(color, row) or not factory.isValidMoveFactory(pool, color):
+        print("Move invalid. Try again")
+        try:
+            pool = int(input("Select a pool: "))
+            color = int(input("Select a color: "))
+            row = int(input("Select a row: ")) - 1
+        except ValueError as e:
+            pool = -1
+            color = 0
+            row = -2
 
     if pool == 0 and factory.pools[0].hasNegativeTile:
         activePlayer.board.floorLine.addTiles(1)
         factory.pools[0].hasNegativeTile = False
+        activePlayer.toStart = True
     chosenTiles = list(filter(lambda tile: tile==color, factory.getPools()[pool].getTiles()))
     if not pool == 0:
         factory.movePoolToCenter(pool, color)
@@ -62,11 +77,11 @@ def bonusPoints(players):
 def main():
     names = input("Enter player names separated by comma:").split(",")
     players = list(map(Player, names))
-    factory = Factory(numPools=2, numColors=5, tilesPerColor=15)
-    activePlayerIndex = -1
+    factory = Factory(numPools=1, numColors=5, tilesPerColor=15)
 
     while not checkGameOver(players):
         factory.fillAllPools() #make sure there are enough tiles in bag
+        activePlayerIndex = getStartingPlayer(players)
         playRound(players, activePlayerIndex, factory) #stops when factory is empty
         for player in players:
             for row in range(0, len(player.board.getLines())):
